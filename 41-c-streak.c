@@ -47,7 +47,7 @@ int main()
             
             case 2:
                 strcpy(s2, "paper");
-                break;
+                break;4
             case 3:
                 strcpy(s2, "scissors");
                 break;
