@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     
     if (sockfd == INVALID_SOCKET)
     {
-        printf("socket");
+        printf("Socket creation failed\n");
         return 1;
     }
 
@@ -55,9 +55,26 @@ int main(int argc, char *argv[])
         
         return 1;
     }
+
+    char *arr[] = {"Joseph", "Michael"};
     printf("Client connected successfully\n");
     
-    closesocket(sockfd);
+    // sending data to the client
+    char buffer[1024] = {0};
+    int bytes_recv = recv(clientfd, buffer, sizeof(buffer) - 1, 0);
+    printf("%d\n", bytes_recv);
+
+    if (bytes_recv > 0)
+    {
+        buffer[bytes_recv] = '\0';
+        
+        printf("Client is saying: %s\n", buffer);
+    } else if (bytes_recv == 0)
+    {
+        printf("Client disconnected: %d\n", WSAGetLastError());
+    }
+    
+    closesocket(sockfd); 
     WSACleanup();
     return 0;
 }

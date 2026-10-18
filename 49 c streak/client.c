@@ -1,20 +1,22 @@
 #include <stdio.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <string.h>
 
 int main()
 {
     WSADATA wsadata;
-    SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (WSAStartup(MAKEWORD(2, 2), &wsadata) != 0)
     {
         printf("Window initialization failed.");
         return 1;
     }
-
+    
+    SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in server_addr = {0};
-
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(3000);
     if (InetPtonA(AF_INET, "127.0.0.1", &server_addr.sin_addr) != 1)
     {
         printf("Invalid server address\n");
@@ -28,8 +30,19 @@ int main()
         return 1;
     }
 
-    char buf[1024];
-    send(sockfd, buf, sizeof buf, 1);
+    char message[] = "Hello, this is the first server connection that I'm trying out.";
+    
+    int bytes_sent = send(sockfd, message, (int)strlen(message), 0);
+
+    if (bytes_sent == SOCKET_ERROR)
+    {
+        printf("Message not sent: %d\n", WSAGetLastError());
+    }
+    else {
+        printf("Sent %d bytes\n", bytes_sent);
+    }
+    
+
     closesocket(sockfd);
     WSACleanup();
     return 0;
